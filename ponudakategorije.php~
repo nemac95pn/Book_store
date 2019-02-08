@@ -1,0 +1,53 @@
+<?php require_once('funkcije.php');
+$knjige=ucitajKnjige("knjige.txt");
+$prikaz=$knjige;
+global $kategorija;
+foreach($prikaz as $id=>$knjiga)
+	{
+		if($knjiga['objavljena']=="da")
+			{
+				echo('<article>');
+				echo('<h3>'.$knjiga['naslov'].'</h3>');
+				echo('<p>'.$knjiga['autor'].'</p>');
+				echo('<div>');
+							if($knjiga['kategorija']=="Administracija") 
+								{
+									echo '<img src="kategorije/admin.jpg" />';
+									$kategorija="Programiranje";
+								}
+									if($knjiga['kategorija']=="HTML-CSS") 
+										{
+											echo '<img src="kategorije/html-css.jpg" />';
+											$kategorija="Web";
+										}
+									if($knjiga['kategorija']=="Joomla") 
+										{
+											echo '<img src="kategorije/joomla.jpg" />';
+											$kategorija="Web";
+										}
+									if($knjiga['kategorija']=="Javascript") 
+										{
+											echo '<img src="kategorije/js.jpg" />';
+											$kategorija="Programiranje";
+										}
+									if($knjiga['kategorija']=="PHP programiranje") 
+										{
+											echo '<img src="kategorije/php.jpg" />';
+											$kategorija="Programiranje";
+										}
+									if($knjiga['kategorija']=="WEB development") 
+										{
+											echo '<img src="kategorije/web.jpg" />';
+											$kategorija="Web";
+										}
+										echo('<p>'.$knjiga['opis'].'</p>');
+										//echo('<b>Kategorija: </b>'.$kategorija);
+										echo('<b>Kategorija: </b>'.$knjiga['kategorija']);
+										echo('<div class="cena">'.$knjiga['cena'].' din</div>');
+										echo('</div>');
+										echo('</article>');
+									
+						
+			}
+	} 
+	?>

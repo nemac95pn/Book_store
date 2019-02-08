@@ -1,0 +1,195 @@
+<?php
+function snimiKnjige($nazivFajla,$niz)
+{
+	$f=fopen($nazivFajla,'wt') or die('Ne mozemo ucitati fajl');
+	$broj=count($niz);
+	fprintf($f,"%d\n",$broj);
+	
+	foreach($niz as $knjiga)
+	{
+		fprintf($f,"%s\n",$knjiga['naslov']);
+		fprintf($f,"%s\n",$knjiga['autor']);
+		fprintf($f,"%s\n",$knjiga['opis']);
+		fprintf($f,"%d\n",$knjiga['cena']);
+		fprintf($f,"%s\n",$knjiga['kategorija']);
+		fprintf($f,"%s\n",$knjiga['objavljena']);
+		fprintf($f,"%s\n",$knjiga['specijalnaponuda']);
+	}
+	fclose($f);
+	
+}
+function ucitajKnjige($nazivFajla)
+{
+	$f=fopen($nazivFajla,'rt') or die('Ne mozemo ucitati fajl');
+	global $broj;
+	fscanf($f,'%d',$broj);
+	$niz=array();
+	for($i=0;$i<$broj;$i++)
+	{
+		$knjiga=array();
+		$knjiga['naslov']=trim(fgets($f));
+		$knjiga['autor']=trim(fgets($f));
+		$knjiga['opis']=trim(fgets($f));
+		$knjiga['cena']=(int)fgets($f);
+		$knjiga['kategorija']=trim(fgets($f));
+		$knjiga['objavljena']=trim(fgets($f));
+		$knjiga['specijalnaponuda']=trim(fgets($f));
+		$niz[]=$knjiga;
+	}
+	fclose($f);
+	return $niz;
+}
+function novaKnjigaIzForme()
+{
+	$knjige=ucitajKnjige("knjige.txt");
+	$novi=array();
+	$novi['naslov']=$_POST['naslov'];
+	$novi['autor']=$_POST['autor'];
+	$novi['opis']=$_POST['opis'];
+	$novi['cena']=(int)$_POST['cena'];
+	$novi['kategorija']=$_POST['kategorija'];
+	$novi['objavljena']=$_POST['objavljena'];
+	$novi['specijalnaponuda']=$_POST['specijalnaponuda'];
+	$knjige[]=$novi;
+	snimiKnjige("knjige.txt",$knjige);
+	//session_destroy();
+	//header('Refresh:0');
+	
+}
+function validirajPodatke()
+{
+		global $greska;
+		//$greska='';
+		if(empty($_POST['naslov']))
+		{
+			$greska='Polje za naslov nije popunjeno';
+			return false;
+		}
+		if(empty($_POST['autor']))
+		{
+			$greska='Polje za autora nije popunjeno';
+			return false;
+		}
+		if(empty($_POST['opis']))
+		{
+			$greska='Polje za opis nije popunjeno';
+			return false;
+		}
+		if(empty($_POST['cena']))
+		{
+			$greska='Polje za cenu nije popunjeno';
+			return false;
+		}		
+		$duz1=strlen($_POST['naslov']);
+		if($duz1<3)
+		{
+				$greska='Naslov je prekratak';
+				return false;
+		}
+		if($duz1>50)
+		{
+			$greska='Naslov je predugacak';
+			return false;
+		}
+		$duz2=strlen($_POST['autor']);
+		if($duz2<3)
+		{
+			$greska='Ime autora je prekratko';
+			return false;
+		}
+		if($duz2>40)
+		{
+			$greska='Ime autora je predugacko';
+			return false;
+		}
+		$duz3=strlen($_POST['opis']);
+		if($duz3<3)
+		{
+			$greska='Opis je prekratak';
+			return false;
+		}
+		if($duz2>200)
+		{
+			$greska='Opis je predugacak';
+			return false;
+		}
+		if(!ctype_digit(strval($_POST['cena'])))
+		{
+			$greska='Cena mora biti broj';
+			return false;
+		}
+		if($_POST['cena']<1 || $_POST['cena']>10000)
+			{
+			$greska='Cena mora biti izmedju 1 i 10000';
+			return false;
+		}
+		
+		return true;	
+}
+function ucitajKategorije($nazivFajla)
+{
+	$f=fopen($nazivFajla,'rt') or die('Ne mozemo ucitati fajl');
+	$niz=array();
+	fscanf($f,'%d',$broj);
+	for($i=0;$i<$broj;$i++)
+	{
+		
+		$niz[] = trim(fgets($f));
+	}
+	fclose($f);
+	return $niz;
+}
+function pretrazi($lista,$termin)
+{
+	$rezknjiga=array();
+	$termin=strtolower($termin);
+	foreach($lista as $knjiga)
+	{
+		if(strstr(strtolower($knjiga['naslov']),$termin) || strstr(strtolower($knjiga['autor']),$termin) || strstr(strtolower($knjiga['opis']),$termin) )
+		{
+			$rezknjiga[]=$knjiga;
+		}
+	}
+	return $rezknjiga;
+}
+function snimiKategorije($nazivFajla,$niz1)
+{
+	$f=fopen($nazivFajla,'wt') or die('Ne mozemo ucitati fajl');
+	$broj=count($niz1);
+	fprintf($f,"%d\n",$broj);
+	
+	foreach($niz1 as $kategorija)
+	{
+		fprintf($f,"%s\n",$kategorija);
+	}
+	fclose($f);
+	
+}
+function novaKategorija()
+{
+	$kategorije=ucitajKategorije("kategorije.txt");
+	$nova=$_POST['novakategorija'];
+	$kategorije[]=$nova;
+	snimiKategorije("kategorije.txt",$kategorije);
+	return true;
+	
+	
+}
+function knjigaIzForme()
+{
+    $i = array();
+    
+    $i['naslov'] = $_POST['naslov'];
+    $i['autor'] = $_POST['autor'];
+    $i['opis'] = $_POST['opis'];
+    $i['cena'] = $_POST['cena'];
+    $i['kategorija']=$_POST['kategorija'];
+    $i['objavljena']=$_POST['objavljena'];
+    $i['specijalnaponuda']=$_POST['specijalnaponuda'];
+    
+   
+    
+    return $i;
+}
+
+?>
